@@ -6,6 +6,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/create', function () {
+Route::post('/create', function () {
     return "welcome";
-});
+});ß
