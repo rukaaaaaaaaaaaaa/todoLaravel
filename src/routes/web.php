@@ -8,4 +8,4 @@ Route::get('/', function () {
 
 Route::post('/create', function () {
     return "welcome";
-});ß
+});
