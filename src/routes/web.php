@@ -6,6 +6,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/create', function () {
-    return "welcome";
-});
+Route::post('/create', [ListController::class, 'store']);
