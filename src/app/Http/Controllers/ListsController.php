@@ -16,9 +16,6 @@ class ListsController extends Controller
         // 値を取り出す
         $title = $request->input('title');
 
-        //バリデーションする（文字数、必須をやる）
-
-
         // 保存
         $todo = Lists::create([
             'title'  => $title,
@@ -27,5 +24,21 @@ class ListsController extends Controller
 
         // 保存したレコードを返す
         return response($title, 200);
+    }
+
+    /**
+     * ToDoを削除する
+     */
+    public function destroy(int $id){
+        
+        // idのレコードを検索
+        $todo = Lists::findOrFail($id);
+
+        // レコード削除
+        $todo->delete();
+
+        // 
+        return response()->noContent();
+
     }
 }
