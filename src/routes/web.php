@@ -8,3 +8,5 @@ Route::get('/', function () {
 });
 
 Route::post('/create', [ListsController::class, 'store']);
+
+Route::delete('/delete/{id}', [ListsController::class, 'destroy']);
