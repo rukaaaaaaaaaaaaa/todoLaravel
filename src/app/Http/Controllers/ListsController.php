@@ -45,4 +45,25 @@ class ListsController extends Controller
         $todo->delete();
         return response()->noContent();
     }
+
+    /**
+     * ToDoを更新する
+     */
+    public function update(int $id, StoreListsRequest $request){
+
+        // 値を取り出す
+        $title = $request->input('title');
+        $status = $request->input('status');
+
+        // idのレコードを検索
+        $todo = Lists::find($id);
+
+        //レコード見つからなかった場合
+        if (! $todo) {
+            return response()->json([
+                'error' => "ID {$id} のToDoは存在しません。"
+            ], 404);
+        }
+
+    }
 }
