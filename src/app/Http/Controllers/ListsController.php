@@ -30,15 +30,19 @@ class ListsController extends Controller
      * ToDoを削除する
      */
     public function destroy(int $id){
-        
+
         // idのレコードを検索
-        $todo = Lists::findOrFail($id);
+        $todo = Lists::find($id);
+
+        //レコード見つからなかった場合
+        if (! $todo) {
+            return response()->json([
+                'error' => "ID {$id} のToDoは存在しません。"
+            ], 404);
+        }
 
         // レコード削除
         $todo->delete();
-
-        // 
         return response()->noContent();
-
     }
 }
