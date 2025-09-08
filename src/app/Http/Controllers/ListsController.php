@@ -10,6 +10,13 @@ use App\Http\Requests\UpdateListsRequest;
 class ListsController extends Controller
 {
     /**
+     * ToDo一覧表示
+     */
+    public function index (){ 
+        return Lists::get();
+    }
+
+    /**
      * ToDoを保存する
      */
     public function store(StoreListsRequest $request){
