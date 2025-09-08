@@ -8,4 +8,7 @@ class Lists extends Model
 {
     protected $table = 'lists';
     protected $fillable = ['title', 'status'];
+    protected $casts = [
+        'status' => 'boolean',
+    ];
 }

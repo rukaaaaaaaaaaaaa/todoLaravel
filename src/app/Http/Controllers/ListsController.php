@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Lists;
 use App\Http\Requests\StoreListsRequest;
+use App\Http\Requests\UpdateListsRequest;
 
 class ListsController extends Controller
 {
@@ -49,11 +50,7 @@ class ListsController extends Controller
     /**
      * ToDoを更新する
      */
-    public function update(int $id, StoreListsRequest $request){
-
-        // 値を取り出す
-        $title = $request->input('title');
-        $status = $request->input('status');
+    public function update(int $id, UpdateListsRequest $request){
 
         // idのレコードを検索
         $todo = Lists::find($id);
@@ -65,5 +62,20 @@ class ListsController extends Controller
             ], 404);
         }
 
+         // title が送られてきた場合だけ更新
+        if ($request->exists('title')) {
+            $todo->title = $request->input('title');
+        }
+
+        // status が送られてきた場合だけ更新
+        if ($request->exists('status')) {
+            $todo->status = boolval($request->input('status'));
+        }
+
+        // 保存
+        $todo->save();
+
+        // 更新後のレコードを返す
+        return response()->json($todo, 200);
     }
 }
