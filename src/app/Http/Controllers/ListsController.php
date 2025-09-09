@@ -31,7 +31,7 @@ class ListsController extends Controller
         ]);
 
         // 保存したレコードを返す
-        return response($title, 200);
+        return response()->json(['title' => $title], 200);
     }
 
     /**
