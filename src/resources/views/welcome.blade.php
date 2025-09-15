@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        /*完了したら取り消し線*/
+        .done {
+            text-decoration: line-through;
+        }
+    </style>
 </head>
 <body>
     <form id="todo-form" action="/create" method="POST">
@@ -28,6 +34,7 @@
             // 1件ずつ <li> を作って追加
             todos.forEach(todo => {
             const li = document.createElement('li');
+            li.dataset.id = todo.id;
             // チェックボックスを作る
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
@@ -38,7 +45,7 @@
             // 削除ボタン
             const button = document.createElement('button');
             button.textContent = '削除';
-            // 削除ボタンが押されたとき
+            // 削除処理
             button.addEventListener('click', async () => {
             if (confirm('本当に削除しますか？')) {
                 await fetch(`/delete/${todo.id}`, { method: 'DELETE' });
@@ -51,15 +58,38 @@
             li.appendChild(button);
             ul.appendChild(li);
             });
-    }
+        }
 
         // 初回表示
-        (async () => {
+        async function init() {
             const todos = await loadTodos();
             createTodos(todos);
-        })();
+        }
+        init();
 
-    // フォーム送信
+        // 完了処理
+        document.getElementById('todo-list').addEventListener('change', async(e) => {
+            const li = e.target.closest('li');
+            if (!li) return;
+
+            const id = li.dataset.id;   
+            const checked = e.target.checked; 
+
+            await fetch(`/update/${id}`,{
+                method: 'PATCH',
+                headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+                },
+                body: new URLSearchParams({ status: checked ? 1 : 0})
+            });
+
+            // 取り消し線つける
+            const span = li.querySelector('span');
+            span.classList.toggle('done', checked);
+        });
+
+        // TODO追加処理
         document.getElementById('todo-form').addEventListener('submit', async (e) => {
         e.preventDefault(); 
 
