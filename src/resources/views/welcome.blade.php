@@ -10,12 +10,15 @@
         .done {
             text-decoration: line-through;
         }
+        #todo-list {
+            list-style: none;
+        }
     </style>
 </head>
 <body>
     <form id="todo-form" action="/create" method="POST">
-        <input name="title" id="title">
-        <input type="submit">
+        <input name="title" id="title" placeholder="TODO入力">
+        <input type="submit" value="追加">
     </form>
     <ul id="todo-list"></ul>
 
@@ -45,10 +48,12 @@
             if (todo.status) {
             span.classList.add('done');}
             // 削除ボタン
-            const button = document.createElement('button');
-            button.textContent = '削除';
+            const del = document.createElement('span');
+            del.textContent = '削除';
+            del.style.color = 'red';
+            del.style.cursor = 'pointer';
             // 削除処理
-            button.addEventListener('click', async () => {
+            del.addEventListener('click', async () => {
             if (confirm('本当に削除しますか？')) {
                 await fetch(`/delete/${todo.id}`, { method: 'DELETE' });
                 const todos = await loadTodos();
@@ -57,7 +62,7 @@
             // li に追加していく
             li.appendChild(checkbox);
             li.appendChild(span);
-            li.appendChild(button);
+            li.appendChild(del);
             ul.appendChild(li);
             });
         }
