@@ -38,6 +38,13 @@
             // 削除ボタン
             const button = document.createElement('button');
             button.textContent = '削除';
+            // 削除ボタンが押されたとき
+            button.addEventListener('click', async () => {
+            if (confirm('本当に削除しますか？')) {
+                await fetch(`/delete/${todo.id}`, { method: 'DELETE' });
+                const todos = await loadTodos();
+                createTodos(todos);
+            }});
             // li に追加していく
             li.appendChild(checkbox);
             li.appendChild(span);
