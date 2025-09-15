@@ -42,6 +42,8 @@
             // タイトルを作る
             const span = document.createElement('span');
             span.textContent = todo.title;
+            if (todo.status) {
+            span.classList.add('done');}
             // 削除ボタン
             const button = document.createElement('button');
             button.textContent = '削除';
