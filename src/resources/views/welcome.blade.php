@@ -85,10 +85,10 @@
             await fetch(`/update/${id}`,{
                 method: 'PATCH',
                 headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'Accept': 'application/json'
                 },
-                body: new URLSearchParams({ status: checked ? 1 : 0})
+                body: JSON.stringify({ status: checked }),
             });
 
             // 取り消し線つける
@@ -104,8 +104,11 @@
 
         await fetch('/create', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ title })
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+                },
+            body: JSON.stringify({ title })
         });
 
         const todos = await loadTodos();
