@@ -32,6 +32,8 @@ class ListsController extends Controller
             'user_id' => auth()->id()
         ]);
 
+        //try catch書く！！！！！
+
         // 保存したレコードを返す
         return response()->json(['title' => $title], 200);
     }
