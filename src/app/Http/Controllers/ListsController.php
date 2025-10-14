@@ -32,7 +32,18 @@ class ListsController extends Controller
             'user_id' => auth()->id()
         ]);
 
-        //try catch書く！！！！！
+        // 保存失敗時
+        if (! $todo) {
+            return response()->json([
+                'error' => 'ToDoの保存に失敗しました。'
+            ], 500);
+        }
+
+        // 正常時
+        return response()->json([
+            'message' => 'ToDoを追加しました。',
+            'data' => $todo
+        ], 201);
 
         // 保存したレコードを返す
         return response()->json(['title' => $title], 200);
