@@ -31,3 +31,9 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('/minio-test', function () {
+    Storage::disk('s3')->put('test.txt', 'これはテスト');
+
+    return 'テストテストテストテスト';
+});
