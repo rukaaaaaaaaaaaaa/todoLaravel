@@ -13,7 +13,8 @@ class ListsController extends Controller
      * ToDo一覧表示
      */
     public function index (){ 
-        return Lists::get();
+        $userId = auth()->id();
+        return Lists::where('user_id', $userId)->get();
     }
 
     /**
@@ -28,7 +29,21 @@ class ListsController extends Controller
         $todo = Lists::create([
             'title'  => $title,
             'status' => false, 
+            'user_id' => auth()->id()
         ]);
+
+        // 保存失敗時
+        if (! $todo) {
+            return response()->json([
+                'error' => 'ToDoの保存に失敗しました。'
+            ], 500);
+        }
+
+        // 正常時
+        return response()->json([
+            'message' => 'ToDoを追加しました。',
+            'data' => $todo
+        ], 201);
 
         // 保存したレコードを返す
         return response()->json(['title' => $title], 200);

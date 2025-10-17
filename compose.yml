@@ -38,5 +38,19 @@ services:
     volumes:
       - db-data:/var/lib/mysql
 
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"   
+      - "9001:9001"   
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
 volumes:
   db-data:
+  minio_data:
