@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Lists;
 use App\Http\Requests\StoreListsRequest;
 use App\Http\Requests\UpdateListsRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ListsController extends Controller
 {
@@ -13,7 +14,7 @@ class ListsController extends Controller
      * ToDo一覧表示
      */
     public function index (){ 
-        $userId = auth()->id();
+        $userId = Auth::id();
         return Lists::where('user_id', $userId)->get();
     }
 
@@ -29,7 +30,7 @@ class ListsController extends Controller
         $todo = Lists::create([
             'title'  => $title,
             'status' => false, 
-            'user_id' => auth()->id()
+            'user_id' =>  Auth::id()
         ]);
 
         // 保存失敗時

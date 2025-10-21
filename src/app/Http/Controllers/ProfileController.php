@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class ProfileController extends Controller
 {
@@ -16,9 +18,19 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = $request->user();
+
+         if ($user->avatar_path) {
+            $signedUrl = Storage::disk('s3')->temporaryUrl(
+                $user->avatar_path,
+                now()->addMinutes(5)
+            );
+            $user->avatar_url = str_replace('http://minio:9000', 'http://localhost:9000', $signedUrl);
+        } else {
+            $user->avatar_url = null;
+        }
+
+        return view('profile.edit', ['user' => $user]);
     }
 
     /**
@@ -57,4 +69,22 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    //プロフィール画像処理
+    public function updateAvatar(Request $request)
+   {
+        $profileImage=$request->file('avatar');
+
+        $request->validate([
+            'avatar' => ['image', 'max:2048'],
+        ]);
+        
+        $path=Storage::disk('s3')->putFile('avatar', $profileImage);
+
+        $user = Auth::user();
+        $user->avatar_path = $path;
+        $user->save();
+
+        return back()->with('success', 'プロフィール画像を更新しました');
+   }
 }
