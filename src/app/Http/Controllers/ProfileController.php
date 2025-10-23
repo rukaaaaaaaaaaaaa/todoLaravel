@@ -18,19 +18,9 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        $user = $request->user();
-
-         if ($user->avatar_path) {
-            $signedUrl = Storage::disk('s3')->temporaryUrl(
-                $user->avatar_path,
-                now()->addMinutes(5)
-            );
-            $user->avatar_url = str_replace('http://minio:9000', 'http://localhost:9000', $signedUrl);
-        } else {
-            $user->avatar_url = null;
-        }
-
-        return view('profile.edit', ['user' => $user]);
+        return view('profile.edit', [
+        'user' => $request->user(),
+        ]);
     }
 
     /**

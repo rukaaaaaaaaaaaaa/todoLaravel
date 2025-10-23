@@ -23,18 +23,23 @@
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
+                        
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    @if ($user->avatar_path)
+                        <img src="{{ config('filesystems.disks.s3.url') }}/{{ config('filesystems.disks.s3.bucket') }}/{{ $user->avatar_path }}"
+                        alt="プロフィール画像" width="300">
+                    @else
+                        <p>まだ画像が登録されていません。</p>
+                    @endif
 
-            @if (Auth::user()->avatar_url)
-                <img src="{{ Auth::user()->avatar_url }}" alt="プロフィール画像" width="150">
-            @else
-                <p>まだ画像が登録されていません。</p>
-            @endif
-
-            <form method="POST" action="/profile/upload" enctype="multipart/form-data">
-                @csrf
-                <input type="file" name="avatar">
-                <button type="submit">アップロード</button>
-            </form>
+                    <form method="POST" action="/profile/upload" enctype="multipart/form-data">
+                        @csrf
+                        <input type="file" name="avatar">
+                        <button type="submit">アップロード</button>
+                    </form>
+                </div>
+            </div>
 
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
