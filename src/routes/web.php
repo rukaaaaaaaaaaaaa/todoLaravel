@@ -33,3 +33,4 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware('auth')->post('/profile/upload', [ProfileController::class, 'updateAvatar']);
+Route::middleware('auth')->post('/profile/bio', [ProfileController::class, 'updateBio']);

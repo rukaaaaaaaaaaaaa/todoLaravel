@@ -53,6 +53,14 @@
                         <h2 class="text-lg font-medium text-gray-900">About Me</h2>
                         <p class="mt-1 text-sm text-gray-600">Text text.</p>
                     </header>
+                    <br>
+                    <form method="POST" action="/profile/bio">
+                        @csrf
+                        <textarea name="bio" rows="4" class="w-full border rounded-md"></textarea>
+                        <br>
+                        <br>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">SAVE</button>
+                    </form>
                 </div>
             </div>
 

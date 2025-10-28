@@ -77,4 +77,20 @@ class ProfileController extends Controller
 
         return back()->with('success', 'プロフィール画像を更新しました');
    }
+
+   //自己紹介文
+   public function updateBio(Request $request){
+
+        $bio = $request->input('bio');
+
+        $request->validate([
+            'bio' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $user = Auth::user();
+        $user->bio = $bio;
+        $user->save();
+
+        return back()->with('success', '自己紹介文を更新しました');
+   }
 }
