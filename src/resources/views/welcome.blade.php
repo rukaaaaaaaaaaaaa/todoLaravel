@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>ToDo</title>
     <style>
         /*完了したら取り消し線*/
         .done {
@@ -20,12 +20,20 @@
         <input name="title" id="title" placeholder="TODO入力">
         <input type="submit" value="追加">
     </form>
+    <form id="todo-search-form" action="/lists" method="GET">
+        <input name="q" id="searchinput" placeholder="キーワードで検索">
+        <input type="button" id="searchbtn" value="検索">
+    </form>
     <ul id="todo-list"></ul>
 
     <script>
         //一覧取得
-        async function loadTodos() {
-            const res = await fetch('/lists', { headers: { 'Accept': 'application/json' } });
+        async function loadTodos(q) {
+            let url = '/lists';
+            if (q && q.trim() !== '') {
+                url = url + '?q=' + encodeURIComponent(q);
+            }
+            const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
             if (!res.ok) throw new Error('HTTP ' + res.status);
             return await res.json();
         }
@@ -114,6 +122,24 @@
         const todos = await loadTodos();
         createTodos(todos);
         document.getElementById('title').value = '';
+        });
+
+        const searchInput = document.getElementById('searchinput');
+        const searchBtn   = document.getElementById('searchbtn');
+
+        //検索ボタン押されたとき
+        searchBtn.addEventListener('click', async () => {
+            const q = searchInput.value.trim(); 
+            const todos = await loadTodos(q);  
+            createTodos(todos);           
+        });
+
+        //検索入力欄でエンター押されたら検索ボタンが走る
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+            e.preventDefault(); 
+            searchBtn.click(); 
+            }
         });
     </script>
 </body>
