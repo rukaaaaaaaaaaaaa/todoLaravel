@@ -32,8 +32,5 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/minio-test', function () {
-    Storage::disk('s3')->put('test.txt', 'これはテスト');
-
-    return 'テストテストテストテスト';
-});
+Route::middleware('auth')->post('/profile/upload', [ProfileController::class, 'updateAvatar']);
+Route::middleware('auth')->post('/profile/bio', [ProfileController::class, 'updateBio']);

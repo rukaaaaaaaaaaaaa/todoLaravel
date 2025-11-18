@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class ProfileController extends Controller
 {
@@ -17,7 +19,7 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         return view('profile.edit', [
-            'user' => $request->user(),
+        'user' => $request->user(),
         ]);
     }
 
@@ -57,4 +59,38 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    //プロフィール画像処理
+    public function updateAvatar(Request $request)
+   {
+        $profileImage=$request->file('avatar');
+
+        $request->validate([
+            'avatar' => ['image', 'max:2048'],
+        ]);
+        
+        $path=Storage::disk('s3')->putFile('avatar', $profileImage);
+
+        $user = Auth::user();
+        $user->avatar_path = $path;
+        $user->save();
+
+        return back()->with('success', 'プロフィール画像を更新しました');
+   }
+
+   //自己紹介文
+   public function updateBio(Request $request){
+
+        $bio = $request->input('bio');
+
+        $request->validate([
+            'bio' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $user = Auth::user();
+        $user->bio = $bio;
+        $user->save();
+
+        return back()->with('success', '自己紹介文を更新しました');
+   }
 }

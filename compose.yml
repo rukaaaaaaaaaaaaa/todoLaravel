@@ -50,6 +50,8 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
+    extra_hosts:
+      - "localhost:host-gateway"
 
 volumes:
   db-data:

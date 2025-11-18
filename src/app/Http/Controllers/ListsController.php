@@ -6,15 +6,22 @@ use Illuminate\Http\Request;
 use App\Models\Lists;
 use App\Http\Requests\StoreListsRequest;
 use App\Http\Requests\UpdateListsRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ListsController extends Controller
 {
     /**
      * ToDo一覧表示
      */
-    public function index (){ 
-        $userId = auth()->id();
-        return Lists::where('user_id', $userId)->get();
+    public function index (Request $request){ 
+        $userId = Auth::id();
+        $q = $request->query('q');
+        $query = Lists::where('user_id', $userId);
+        //検索キーワードがある場合はキーワードで絞る
+        if (!is_null($q) && $q !== '') {
+        $query->where('title', 'like', '%'.$q.'%');
+        }
+        return $query->get();
     }
 
     /**
@@ -29,7 +36,7 @@ class ListsController extends Controller
         $todo = Lists::create([
             'title'  => $title,
             'status' => false, 
-            'user_id' => auth()->id()
+            'user_id' =>  Auth::id()
         ]);
 
         // 保存失敗時
