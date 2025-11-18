@@ -16,14 +16,29 @@
     </style>
 </head>
 <body>
+    {{-- フォルダ --}}
+    <section id="folder-area">
+        <form id="folder-form">
+            <input 
+                id="folder-name" 
+                name="name" 
+                placeholder="フォルダ名を入力"
+            >
+            <button type="submit">フォルダ追加</button>
+        </form>
+        <ul id="folder-list"></ul>
+    </section>
+    {{-- Todo入力 --}}
     <form id="todo-form" action="/create" method="POST">
         <input name="title" id="title" placeholder="TODO入力">
         <input type="submit" value="追加">
     </form>
+    {{-- Todo検索 --}}
     <form id="todo-search-form" action="/lists" method="GET">
         <input name="q" id="searchinput" placeholder="キーワードで検索">
         <input type="button" id="searchbtn" value="検索">
     </form>
+    {{-- Todo一覧 --}}
     <ul id="todo-list"></ul>
 
     <script>
@@ -74,13 +89,6 @@
             ul.appendChild(li);
             });
         }
-
-        // 初回表示
-        async function init() {
-            const todos = await loadTodos();
-            createTodos(todos);
-        }
-        init();
 
         // 完了処理
         document.getElementById('todo-list').addEventListener('change', async(e) => {
@@ -141,6 +149,63 @@
             searchBtn.click(); 
             }
         });
+
+        //フォルダー登録
+        const folderForm = document.getElementById('folder-form');
+        const folderNameInput = document.getElementById('folder-name');
+        folderForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            const name = folderNameInput.value.trim();
+            if (!name) {
+                alert('フォルダ名を入力してください');
+                return;
+            }
+            await fetch('/folders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                    },
+                body: JSON.stringify({ name })
+            });
+            folderNameInput.value = '';
+
+            const folders = await loadFolders();
+            createFolders(folders);
+        });
+
+        //フォルダ一覧取得
+        async function loadFolders() {
+            const res = await fetch('/folders', { headers: { 'Accept': 'application/json' } });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return await res.json();
+        }
+
+        //フォルダ一覧表示
+        function createFolders(folders) {
+            const ul = document.getElementById('folder-list');
+            ul.innerHTML = '';
+            // 1件ずつ <li> を作って追加
+            folders.forEach(folder => {
+                const li = document.createElement('li');
+                li.dataset.id = folder.id;
+                // タイトルを作る
+                const span = document.createElement('span');
+                span.textContent = folder.name;
+                // li に追加していく
+                li.appendChild(span);
+                ul.appendChild(li);
+            });
+        }
+
+        // 初回表示
+        async function init() {
+            const todos = await loadTodos();
+            createTodos(todos);
+            const folders = await loadFolders();
+            createFolders(folders);
+        }
+        init();
     </script>
 </body>
 </html>
