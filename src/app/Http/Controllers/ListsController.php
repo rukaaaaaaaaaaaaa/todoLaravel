@@ -101,6 +101,12 @@ class ListsController extends Controller
             $todo->status = boolval($request->input('status'));
         }
 
+        // フォルダ名 が送られてきた場合だけ更新
+        if ($request->exists('folder_id')) {
+            $folderId = $request->input('folder_id');
+            $todo->folder_id = $folderId !== '' ? $folderId : null;
+        }
+
         // 保存
         $todo->save();
 

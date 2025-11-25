@@ -42,6 +42,9 @@
     <ul id="todo-list"></ul>
 
     <script>
+        //フォルダー持っておく箱
+        let foldersCache = [];
+
         //一覧取得
         async function loadTodos(q) {
             let url = '/lists';
@@ -70,6 +73,44 @@
             span.textContent = todo.title;
             if (todo.status) {
             span.classList.add('done');}
+            //フォルダー選択プルダウン
+            const folderSelect = document.createElement('select');
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';              
+            emptyOption.textContent = 'フォルダなし';
+            folderSelect.appendChild(emptyOption);
+            foldersCache.forEach(folder => {
+                const option = document.createElement('option');
+                option.value = folder.id;;              
+                option.textContent = folder.name;
+                if (todo.folder_id == folder.id) {
+                    option.selected = true;
+                }
+                folderSelect.appendChild(option);
+            });
+            //プルダウン変更されたら
+            folderSelect.addEventListener('change', async(e) => {
+                const newFolderId = e.target.value;
+                try {
+                    const response = await fetch(`/update/${todo.id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            folder_id: newFolderId === '' ? null : newFolderId
+                        })
+                    });
+                    if (!response.ok) {
+                        throw new Error('フォルダ更新に失敗しました (HTTP ' + response.status + ')');
+                    }
+                    alert('フォルダを変更しました');
+                } catch (error) {
+                    console.error(error);
+                    alert('フォルダの更新に失敗しました');
+                }
+            });
             // 削除ボタン
             const del = document.createElement('span');
             del.textContent = '削除';
@@ -85,6 +126,7 @@
             // li に追加していく
             li.appendChild(checkbox);
             li.appendChild(span);
+            li.appendChild(folderSelect);
             li.appendChild(del);
             ul.appendChild(li);
             });
@@ -92,6 +134,9 @@
 
         // 完了処理
         document.getElementById('todo-list').addEventListener('change', async(e) => {
+            if (e.target.type !== 'checkbox') {
+                return;
+            }
             const li = e.target.closest('li');
             if (!li) return;
 
@@ -106,6 +151,7 @@
                 },
                 body: JSON.stringify({ status: checked }),
             });
+            //正常時と異常時で処理を分ける（try-catch）
 
             // 取り消し線つける
             const span = li.querySelector('span');
@@ -160,18 +206,26 @@
                 alert('フォルダ名を入力してください');
                 return;
             }
-            await fetch('/folders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                    },
-                body: JSON.stringify({ name })
-            });
-            folderNameInput.value = '';
-
-            const folders = await loadFolders();
-            createFolders(folders);
+            try{
+                const response = await fetch('/folders', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json'
+                                        },
+                                    body: JSON.stringify({ name })
+                                });
+                if (!response.ok) {
+                throw new Error(`レスポンスステータス: ${response.status}`);
+                }
+                const json = await response.json();
+                folderNameInput.value = '';
+                
+                const folders = await loadFolders();
+                createFolders(folders);
+            }catch (error) {
+                console.error(error.message);
+            }
         });
 
         //フォルダ一覧取得
@@ -200,10 +254,12 @@
 
         // 初回表示
         async function init() {
+            const folders = await loadFolders();
+            foldersCache = folders;
+            createFolders(folders);
+
             const todos = await loadTodos();
             createTodos(todos);
-            const folders = await loadFolders();
-            createFolders(folders);
         }
         init();
     </script>

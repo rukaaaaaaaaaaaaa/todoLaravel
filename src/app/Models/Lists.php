@@ -17,7 +17,7 @@ class Lists extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function foldere()
+    public function folders()
     {
         return $this->belongsTo(Folder::class);
     }

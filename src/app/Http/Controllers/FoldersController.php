@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateListsRequest;
 use App\Models\Folder;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,6 +21,11 @@ class FoldersController extends Controller
 
         // 値を取り出す
         $name = $request->input('name');
+
+        //バリデーション
+         $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
 
         // 保存
         $folder = Folder::create([
@@ -43,5 +49,5 @@ class FoldersController extends Controller
 
     //フォルダ削除
 
-    //フォルダ名更新
+    //フォルダ名更新 
 }
