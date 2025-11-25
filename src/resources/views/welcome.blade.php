@@ -143,15 +143,22 @@
             const id = li.dataset.id;   
             const checked = e.target.checked; 
 
-            await fetch(`/update/${id}`,{
-                method: 'PATCH',
-                headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-                },
-                body: JSON.stringify({ status: checked }),
-            });
-            //正常時と異常時で処理を分ける（try-catch）
+            try{
+                const response = await fetch(`/update/${id}`,{
+                                    method: 'PATCH',
+                                    headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                    },
+                                    body: JSON.stringify({ status: checked }),
+                                });
+                if (!response.ok) {
+                throw new Error(`レスポンスステータス: ${response.status}`);
+                }
+                const json = await response.json();
+            }catch (error) {
+                console.error(error.message);
+            }
 
             // 取り消し線つける
             const span = li.querySelector('span');
