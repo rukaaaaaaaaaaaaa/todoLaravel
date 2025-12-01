@@ -47,6 +47,13 @@ class FoldersController extends Controller
         ], 201);
     }
 
+    public function show(int $id)
+    {
+        return view('welcome', [
+            'currentFolderId' => $id,
+        ]);
+    }
+
     //フォルダ削除
 
     //フォルダ名更新 

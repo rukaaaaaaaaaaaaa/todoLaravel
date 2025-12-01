@@ -24,6 +24,7 @@ Route::post('/folders',[FoldersController::class,'store']);
 
 Route::get('/folders', [FoldersController::class, 'index']);
 
+Route::get('/folders/{id}', [FoldersController::class, 'show']);
 });
 
 Route::get('/dashboard', function () {

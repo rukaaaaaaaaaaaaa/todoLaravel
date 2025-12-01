@@ -15,8 +15,14 @@ class ListsController extends Controller
      */
     public function index (Request $request){ 
         $userId = Auth::id();
+        //パラメーターから値を取り出す
         $q = $request->query('q');
+        $folderId = $request->query('folder_id'); 
         $query = Lists::where('user_id', $userId);
+        //フォルダIDがあれば絞る
+        if (!is_null($folderId) && $folderId !== '') {
+            $query->where('folder_id', $folderId);
+        }
         //検索キーワードがある場合はキーワードで絞る
         if (!is_null($q) && $q !== '') {
         $query->where('title', 'like', '%'.$q.'%');

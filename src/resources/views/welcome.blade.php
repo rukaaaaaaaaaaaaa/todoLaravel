@@ -15,7 +15,7 @@
         }
     </style>
 </head>
-<body>
+<body data-current-folder-id="{{ $currentFolderId ?? '' }}">
     {{-- フォルダ --}}
     <section id="folder-area">
         <form id="folder-form">
@@ -45,12 +45,26 @@
         //フォルダー持っておく箱
         let foldersCache = [];
 
+        const currentFolderId = document.body.dataset.currentFolderId || '';
+
         //一覧取得
         async function loadTodos(q) {
             let url = '/lists';
-            if (q && q.trim() !== '') {
-                url = url + '?q=' + encodeURIComponent(q);
+            //パラメータを作る
+            const params = new URLSearchParams();
+            //フォルダ指定があるとき
+            if (currentFolderId) {
+                params.append('folder_id', currentFolderId);
             }
+            //検索があるとき
+            if (q && q.trim() !== '') {
+                params.append('q', q.trim());
+            }
+            const queryString = params.toString();
+            if (queryString !== '') {
+                url = url + '?' + queryString;
+            }
+            //API実行
             const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
             if (!res.ok) throw new Error('HTTP ' + res.status);
             return await res.json();
@@ -230,6 +244,9 @@
                 
                 const folders = await loadFolders();
                 createFolders(folders);
+                foldersCache = folders;
+                const todos = await loadTodos();
+                createTodos(todos);
             }catch (error) {
                 console.error(error.message);
             }
@@ -250,11 +267,12 @@
             folders.forEach(folder => {
                 const li = document.createElement('li');
                 li.dataset.id = folder.id;
-                // タイトルを作る
-                const span = document.createElement('span');
-                span.textContent = folder.name;
+                // フォルダページに飛べるようにリンクをつける
+                const link = document.createElement('a');
+                link.href = `/folders/${folder.id}`;
+                link.textContent = folder.name; 
                 // li に追加していく
-                li.appendChild(span);
+                li.appendChild(link);
                 ul.appendChild(li);
             });
         }
