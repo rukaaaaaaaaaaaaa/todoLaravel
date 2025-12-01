@@ -15,8 +15,14 @@ class ListsController extends Controller
      */
     public function index (Request $request){ 
         $userId = Auth::id();
+        //パラメーターから値を取り出す
         $q = $request->query('q');
+        $folderId = $request->query('folder_id'); 
         $query = Lists::where('user_id', $userId);
+        //フォルダIDがあれば絞る
+        if (!is_null($folderId) && $folderId !== '') {
+            $query->where('folder_id', $folderId);
+        }
         //検索キーワードがある場合はキーワードで絞る
         if (!is_null($q) && $q !== '') {
         $query->where('title', 'like', '%'.$q.'%');
@@ -99,6 +105,12 @@ class ListsController extends Controller
         // status が送られてきた場合だけ更新
         if ($request->exists('status')) {
             $todo->status = boolval($request->input('status'));
+        }
+
+        // フォルダ名 が送られてきた場合だけ更新
+        if ($request->exists('folder_id')) {
+            $folderId = $request->input('folder_id');
+            $todo->folder_id = $folderId !== '' ? $folderId : null;
         }
 
         // 保存

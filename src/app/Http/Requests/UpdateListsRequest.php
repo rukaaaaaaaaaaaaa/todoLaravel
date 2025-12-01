@@ -24,6 +24,7 @@ class UpdateListsRequest extends FormRequest
         return [
             'title'  => ['sometimes', 'string', 'max:15'],
             'status' => ['sometimes', 'boolean'], 
+            'folder_id' => ['sometimes', 'integer'],
         ];
     }
 }

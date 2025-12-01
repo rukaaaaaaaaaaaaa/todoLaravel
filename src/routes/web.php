@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ListsController;
+use App\Http\Controllers\FoldersController;
+use App\Models\Folder;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -18,6 +20,11 @@ Route::delete('/delete/{id}', [ListsController::class, 'destroy']);
 
 Route::patch('/update/{id}', [ListsController::class, 'update']);
 
+Route::post('/folders',[FoldersController::class,'store']);
+
+Route::get('/folders', [FoldersController::class, 'index']);
+
+Route::get('/folders/{id}', [FoldersController::class, 'show']);
 });
 
 Route::get('/dashboard', function () {
